@@ -196,8 +196,7 @@ class Game {
   }
 
   private init () : void {
-    this.cells = Array(16).fill(0)
-    Array(2).fill(null).forEach(this.generateBlock.bind(this))
+    this.cells = Array(16).fill(0).map(this.generateBlock)
     this.score = 0
     this.won = false
     this.over = false
@@ -234,19 +233,24 @@ class Game {
     return this.cells.filter(cell => cell === 0).length !== 0
   }
 
-  private generateBlock (): void {
-    while (this.hasEmptyCell()) {
-      const randomIndex = Math.floor(Math.random() * 16)
-
-      if (this.cells[randomIndex] === 0) {
-        if (Math.random() < 0.5) {
-          this.cells[randomIndex] = 2
-        } else {
-          this.cells[randomIndex] = 4
-        }
-        break
-      }
+  private generateBlock (): number {
+    if (Math.random() < 0.5) {
+      return 2
+    } else {
+      return 4
     }
+    // while (this.hasEmptyCell()) {
+      // const randomIndex = Math.floor(Math.random() * 16)
+
+    //   if (this.cells[randomIndex] === 0) {
+        // if (Math.random() < 0.5) {
+        //   this.cells[randomIndex] = 2
+        // } else {
+        //   this.cells[randomIndex] = 4
+        // }
+        // break
+      // }
+    // }
   }
 }
 
