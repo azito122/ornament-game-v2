@@ -27,3 +27,7 @@ export function getRandomInt(min:number, max:number): number {
 export function getRandomItem(arr:any[]) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
+
+export function deepCopy(thing:any) {
+  return JSON.parse(JSON.stringify(thing));
+}

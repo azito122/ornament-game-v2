@@ -4,8 +4,9 @@ import './Cell.css'
 
 interface CellProps {
   position: Position,
-  value: number,
+  type: number,
   boom: Function,
+  special: string,
 }
 
 interface CellState {}
@@ -13,7 +14,7 @@ interface CellState {}
 export class Cell extends React.Component<CellProps, CellState> {
   render () {
     return (
-      <div onClick={() => {this.props.boom(this.props.position,this.props.value)}} className={`cell cell-${this.props.value}`}>
+      <div onClick={() => {this.props.boom(this.props.position,this.props.type)}} className={`cell cell-${this.props.type} cell-${this.props.special}`}>
         <span></span>
       </div>
     )

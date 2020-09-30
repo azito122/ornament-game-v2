@@ -19,6 +19,7 @@
     "noEmit": true,
     "jsx": "react",
     "emitDecoratorMetadata": false,
+    "downlevelIteration": true,
   },
   "include": [
     "src"

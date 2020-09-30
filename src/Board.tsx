@@ -1,5 +1,5 @@
 import React from 'react'
-import { getRandomInt, getRandomItem, Position } from './Util'
+import { getRandomInt, getRandomItem, Position, deepCopy } from './Util'
 import { Cell, _Cell } from './Cell'
 import './Board.css'
 
@@ -11,16 +11,22 @@ interface BoardProps {
 }
 
 interface BoardState {
-  cells: number[][],
+  cells: _Cell[][],
 }
 
 export default class Board extends React.Component<BoardProps, BoardState> {
-  private buffer:number[][];
+  private buffer:_Cell[][];
 
   constructor (props:any) {
     super(props)
 
-    let cells = Array(this.props.height).fill(Array(this.props.width).fill(0));
+    let emptyCell = new _Cell(0);
+    let cells = Array(this.props.height).fill(Array(this.props.width).fill(emptyCell));
+    // cells.forEach((row:_Cell[]) => {
+    //   row.forEach((empty:_Cell) => {
+    //     empty = new _Cell(0);
+    //   })
+    // })
     this.buffer = JSON.parse(JSON.stringify(cells));
 
     this.state = {
@@ -36,16 +42,17 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     return (
       <div className="cells">
         {
-          this.state.cells.map((cells: number[], groupIndex: number) => {
+          this.state.cells.map((cells: _Cell[], groupIndex: number) => {
             return (
               <div key={groupIndex} className="cells-row">
                 {
-                  cells.map((cell: number, cellIndex: number) => {
+                  cells.map((cell: _Cell, cellIndex: number) => {
                     return <Cell
                       position={new Position(cellIndex,groupIndex)}
                       key={groupIndex * 4 + cellIndex}
-                      value={cell}
+                      type={cell.type}
                       boom={(p:Position,v:number)=>{this.boom(p,v)}}
+                      special={cell.special}
                     />
                   })
                 }
@@ -59,6 +66,7 @@ export default class Board extends React.Component<BoardProps, BoardState> {
 
   fillCells(s?:number) {
     let ns:number[];
+
     if (typeof s !== 'undefined') {
       let pickn = s > 3 ? s - 1 : 2;
       ns = Array(pickn).fill(null);
@@ -66,19 +74,22 @@ export default class Board extends React.Component<BoardProps, BoardState> {
         return this.getRandomTileType();
       });
     }
-    this.buffer = this.buffer.map(
-      (v:number[]) => {
-        return v.map(
-          (v:number) => {
-            if (v === 0) {
-              return this.fillCell(ns);
-            }
-            return v;
-          }
-        )
-      }
-    );
+
+    this.buffer.forEach( (r:_Cell[]) => {
+      r.forEach( (c:_Cell) => {
+        if (c.type === 0) {
+          c.type = this.fillCell(ns);
+          c.special = this.cellSpecialize();
+        }
+      })
+    });
     this.flushBuffer();
+  }
+
+  private cellSpecialize() {
+    if(getRandomInt(1,100) < 4) {
+      return getRandomItem(['borg', 'gold']);
+    }
   }
 
   fillCell(ns?:number[]):number {
@@ -90,60 +101,51 @@ export default class Board extends React.Component<BoardProps, BoardState> {
   }
 
   boom (position:Position, baseValue:number) {
-    React.Children.map(this.props.children, (child) => {console.log(child)});
-    let boomCount = this._boom(position, baseValue) - 1;
-    if (boomCount >= 3) {
+    let toBoom = this.calcGroup(position);
+
+    if (toBoom.length >= 3) {
+      this.boomByPositions(toBoom);
+      this.props.addScore(toBoom.length);
+
       this.flushBuffer();
-      this.props.addScore(boomCount);
+
       setTimeout(() => {
         let bfc = this.fillCells.bind(this);
-        bfc(boomCount)
+        bfc(toBoom.length)
       }, 700)
     } else {
       this.resetBuffer();
     }
   }
 
-  _boom (position:Position, baseValue:number) {
-    let adjacentCells = this.getAdjacentCells(position);
-    let boomCount = 0;
+  private calcGroup(start:Position) {
+    let startCell = this.getCell(start);
+    let findType = startCell.type;
+    let searchSpace = deepCopy(this.buffer)
 
-    adjacentCells.forEach((position) => {
-      let value = this.getCellValue(position);
+    return this.findMatchingAdjacent(searchSpace,start,findType,[])
+  }
 
-      if (value === 0) {
-        return;
-      }
 
-      if (baseValue === value) {
-        this.setCellValue(position, 0);
-        boomCount += this._boom(position, baseValue);
+  private findMatchingAdjacent(searchSpace:&_Cell[][], start:Position, findType:number, found:Position[]):Position[] {
+    if (searchSpace[start.y][start.x].type === 0) {
+      return found;
+    }
+
+    found.push(start);
+    searchSpace[start.y][start.x].type = 0;
+
+    let adjacentPositions = this.getAdjacentPositions(start);
+    adjacentPositions.forEach((adjPosition:Position) => {
+      let adjCell = this.getCell(adjPosition);
+      if (adjCell.type === findType) {
+        found.concat(this.findMatchingAdjacent(searchSpace,adjPosition,findType,found));
       }
     })
-    return boomCount + 1;
+    return found;
   }
 
-  private setCellValue(p:Position, value:number) {
-    this.buffer[p.y][p.x] = value;
-  }
-
-  private flushBuffer() {
-    console.log(this.props.children);
-    let buffer = JSON.parse(JSON.stringify(this.buffer));
-    this.setState((state) => {
-      return {cells: buffer}
-    })
-  }
-
-  private resetBuffer() {
-    this.buffer = JSON.parse(JSON.stringify(this.state.cells));
-  }
-
-  private getCellValue(p:Position) {
-    return this.buffer[p.y][p.x];
-  }
-
-  private getAdjacentCells(p:Position) {
+  private getAdjacentPositions(p:Position) {
     let x = p.x;
     let y = p.y;
     let positions = [
@@ -156,6 +158,64 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     return positions.filter((p:Position) => {
       return p.onBoard();
     })
+  }
+
+  private boomByPositions(positions:Position[]) {
+    positions.forEach((p:Position) => {this.boomByPosition(p)});
+  }
+
+  private boomByPosition(position:Position) {
+    let cell = this.getCell(position);
+    this.boomCell(cell);
+  }
+
+  private boomCell(cell:&_Cell) {
+    let cType = cell.type;
+    let cSpecial = cell.special;
+    cell.type = 0;
+    cell.special = '';
+
+    if (cSpecial === 'borg') {
+      this.boomAllOfType(cType)
+    } else if (cSpecial === 'gold') {
+      this.props.addScore(15)
+    }
+  }
+
+  private boomAllOfType(type:number) {
+    console.log('Boom all of type', type);
+    this.buffer.forEach((row:_Cell[]) => {
+      row.forEach((cell:_Cell) => {
+        if (cell.type === type) {
+          // console.log('boom cell', cell);
+          this.boomCell(cell);
+        }
+      })
+    })
+    this.flushBuffer();
+  }
+
+  private getCell(p:Position):_Cell {
+    return this.buffer[p.y][p.x];
+  }
+
+  private getCellType(p:Position):number {
+    return this.getCell(p).type;
+  }
+
+  private setCellType(p:Position, type:number) {
+    this.getCell(p).type = type;
+  }
+
+  private flushBuffer() {
+    let buffer = JSON.parse(JSON.stringify(this.buffer));
+    this.setState((state) => {
+      return {cells: buffer}
+    })
+  }
+
+  private resetBuffer() {
+    this.buffer = JSON.parse(JSON.stringify(this.state.cells));
   }
 
   private getRandomTileType():number {
