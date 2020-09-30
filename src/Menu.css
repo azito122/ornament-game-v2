@@ -1,0 +1,28 @@
+.menu-icon {
+    height: 100px;
+    width: 100px;
+    background-image: url('https://image.flaticon.com/icons/png/512/40/40031.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.menu {
+    visibility: hidden;
+    position: absolute;
+    top: 10rem;
+    left: 50%;
+    z-index: 30000;
+    padding: 4rem;
+    background-color: white;
+    border: 1px solid grey;
+    border-radius: 5px;
+}
+
+.menu.menu-visible {
+    visibility: visible;
+}
+
+.menu ul {
+    margin: 0;
+    padding: 0;
+}

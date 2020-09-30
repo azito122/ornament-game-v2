@@ -5,8 +5,8 @@
   background-color: rgba(238, 228, 218, .35);
   font-weight: bold;
   border-radius: 3px;
-  width: 106.25px;
-  height: 106.25px;
+  width: 50px;
+  height: 50px;
   margin-right: 15px;
   margin-bottom: 15px;
   display: inline-flex;
@@ -14,68 +14,96 @@
   align-items: center;
 }
 
+.cell span {
+  transition: background-color .3s;
+  display: block;
+  border-radius: 1000px;
+  width: 100%;
+  height: 100%;
+  animation-fill-mode: forwards;
+  animation-timing-function: step-end;
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  animation-duration: 1s;
+}
+
 .cell:last-child {
   margin-right: 0;
 }
 
-.cell-0 {
-  color: transparent;
+.cell-0 span {
+  background-color: transparent;
 }
 
-.cell-2 {
-  background-color: #eee4da;
+@keyframes one {
+  0% {
+    /* background-image: url('https://i.gifer.com/HKwG.gif'); */
+    background-color: blue;
+  }
+  100% {
+    background-image: url('https://library.kissclipart.com/20180918/wtq/kissclipart-rock-sprite-png-clipart-clip-art-4bb24258a61cdb99.jpg');
+  }
 }
 
-.cell-4 {
-  background-color: #eee1c9;
+.cell-1 span {
+  animation-name: one;
 }
 
-.cell-8 {
-  color: #f9f6f2;
-  background-color: #f3b27a;
+@keyframes two {
+  0% {
+    /* background-image: url('https://i.gifer.com/HKwG.gif'); */
+    background-color: red;
+  }
+  100% {
+    background-image: url('https://www.clipartmax.com/png/middle/4-43475_christmas-pine-clipart-pinecone-clipart.png');
+  }
 }
 
-.cell-16 {
-  color: #f9f6f2;
-  background-color: #f69664;
+.cell-2 span {
+  animation-name: two;
 }
 
-.cell-32 {
-  color: #f9f6f2;
-  background-color: #f77c5f;
+@keyframes three {
+  0% {
+    /* background-image: url('https://i.gifer.com/HKwG.gif'); */
+    background-color: green;
+  }
+  100% {
+    background-image: url('https://banner2.cleanpng.com/20180419/oyw/kisspng-computer-icons-leaf-clip-art-lotus-leaves-5ad93eb2412372.0423555215241868022668.jpg');
+  }
 }
 
-.cell-64 {
-  color: #f9f6f2;
-  background-color: #f75f3b;
+.cell-3 span {
+  animation-name: three;
 }
 
-.cell-128 {
-  color: #f9f6f2;
-  background-color: #edd073;
-  font-size: 45px;
+@keyframes four {
+  0% {
+    /* background-image: url('https://i.gifer.com/HKwG.gif'); */
+    background-color: white;
+  }
+  100% {
+    background-image: url('https://banner2.cleanpng.com/20180405/aie/kisspng-snowflake-ice-crystals-ice-crystals-snowflake-5ac6ae16b3bb17.6102365215229701347362.jpg');
+  }
 }
 
-.cell-256 {
-  color: #f9f6f2;
-  background-color: #edcc62;
-  font-size: 45px;
+.cell-4 span {
+  animation-name: four;
 }
 
-.cell-512 {
-  color: #f9f6f2;
-  background-color: #edc950;
-  font-size: 45px;
+.cell-5 span {
+  background-color: lime;
 }
 
-.cell-1024 {
-  color: #f9f6f2;
-  background-color: #edc53f;
-  font-size: 35px;
+.cell-6 span {
+  background-color: violet;
 }
 
-.cell-2048 {
-  color: #f9f6f2;
-  background-color: #edc22e;
-  font-size: 35px;
+.cell-7 span {
+  background-color: brown;
+}
+
+.cell-8 span {
+  background-color: orange;
 }

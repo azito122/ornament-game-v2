@@ -1,58 +1,35 @@
 import React from 'react'
-import Cells from './Cells'
-import game from './Game'
+import Board from './Board'
+import Menu from './Menu'
 import './App.css'
 
-interface AppProps {}
+interface AppProps {
+}
 
 interface AppState {
   score: number,
+  level: number,
   addition: number,
-  cells: number[][],
   over: boolean,
-  won: boolean
+  won: boolean,
 }
 
 export default class App extends React.Component<AppProps, AppState> {
   constructor (props: any) {
     super(props)
 
-    game.start()
-
     this.state = {
+      level: 1,
       score: 0,
-      cells: game.cells,
       over: false,
       won: false,
       addition: 0
     }
-
-    this.handleKeydown = this.handleKeydown.bind(this)
-    this.restart = this.restart.bind(this)
   }
 
-  componentDidMount () {
-    document.addEventListener('keydown', this.handleKeydown)
-
-    game.addCallback('over', () => {
-      this.setState({ over: true })
-    })
-
-    game.addCallback('won', () => {
-      this.setState({ won: true })
-    })
-
-    game.addCallback('addScore', (score: number) => {
-      this.setState({ addition:  score })
-    })
-  }
+  componentDidMount () {  }
 
   componentWillUnmount () {
-    document.removeEventListener('keydown', this.handleKeydown)
-
-    game.removeCallback('over')
-    game.removeCallback('won')
-    game.removeCallback('addScore')
   }
 
   render () {
@@ -60,7 +37,8 @@ export default class App extends React.Component<AppProps, AppState> {
       <div className="app">
         <div className="game-header">
           <h1 className="title">
-            2048
+            Christmas Bonanza
+            {this.state.level}
           </h1>
           <div className="score-container">
             {this.state.score}
@@ -71,12 +49,11 @@ export default class App extends React.Component<AppProps, AppState> {
               </div>
             }
           </div>
+          <Menu />
         </div>
 
         <div className="game-intro">
-          <button className="restart-button" onClick={this.restart}>New Game</button>
-          <h2 className="subtitle">Play 2048 Game</h2>
-          Join the numbers and get to the <b>2048 tile!</b>
+          {/* <button className="restart-button" onClick={this.restart}>New Board</button> */}
         </div>
 
         <div className="game-container">
@@ -84,56 +61,65 @@ export default class App extends React.Component<AppProps, AppState> {
             (this.state.won || this.state.over) &&
               <div className={`game-message game-${(this.state.won && 'won') || (this.state.over && 'over')}`}>
                 <p>
-                  {this.state.won ? 'You win!' : 'Game over!'}
+                  {this.state.won ? 'You win!' : 'Board over!'}
                 </p>
 
                 <div className='actions'>
-                  <button className='retry-button' onClick={this.restart}>Try again</button>
+                  {/* <button className='retry-button' onClick={this.restart}>Try again</button> */}
                 </div>
               </div>
           }
-          <Cells cells={this.state.cells} />
+          <Board
+            width={10}
+            height={10}
+            addScore={(s:number) => {this.addScore(s)}}
+            level={this.state.level}
+          />
         </div>
 
         <p className="game-explanation">
-          <b className="important">How to play: </b>
-          Use your <b>arrow keys</b> to move the tiles. When two tiles with the same number touch, they <b>merge into one!</b>
         </p>
       </div>
     )
   }
 
-  restart (event: any) {
-    event.preventDefault()
-    game.restart()
-    this.setState({
-      cells: game.cells,
-      addition: 0,
-      score: 0,
-      over: false,
-      won: false
-    })
-  }
+  private addScore (boomed: number) {
+    const levelThresholds = [
+      0,
+      1000,
+      2100,
+      3300,
+      4600
+    ]
 
-  private handleKeydown (event: any) {
-    const keyMap : any = {
-      ArrowUp: 'up',
-      ArrowDown: 'down',
-      ArrowLeft: 'left',
-      ArrowRight: 'right'
+    let add = boomed;
+    if (boomed <= 4) {
+      add = 10 * boomed;
+    } else if (boomed <= 7) {
+      add = 15 * boomed;
+    } else if (boomed <= 10) {
+      add = 20 * boomed;
+    } else {
+      add = 25 * boomed;
     }
 
-    if (game.respond(keyMap[event.code])) {
-      this.refreshGameState()
-    }
-  }
+    let newScore = add + this.state.score;
 
-  private refreshGameState () : void {
-    this.setState({
-      cells: game.cells,
-      score: game.score,
-      over: game.over,
-      won: game.won
+    this.setState((state) => {
+      let level = state.level;
+
+      levelThresholds.reduce((a:number, b:number, i:number):number => {
+        if (newScore >= a && newScore <= b) {
+          level = i;
+        }
+
+        return b;
+      })
+
+      return {
+        score: newScore,
+        level: level,
+      }
     })
   }
 }
