@@ -1,5 +1,9 @@
+.cells {
+  display: table;
+}
+
 .cells-row {
-  margin-bottom: 15px;
+  display: table-row;
 }
 
 .cells-row:last-child {

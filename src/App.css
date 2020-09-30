@@ -1,5 +1,6 @@
 .app {
-  width: 500px;
+  width: 100%;
+  margin: 1rem 10rem;
 }
 
 .game-header {

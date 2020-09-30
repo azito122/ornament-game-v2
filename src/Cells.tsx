@@ -3,7 +3,7 @@ import Cell from './Cell'
 import './Cells.css'
 
 interface CellsProps {
-  cells: number[]
+  cells: number[][]
 }
 
 interface CellsState {}
@@ -13,7 +13,7 @@ export default class Cells extends React.Component<CellsProps, CellsState> {
     return (
       <div className="cells">
         {
-          this.cellGroups().map((cells: number[], groupIndex: number) => {
+          this.props.cells.map((cells: number[], groupIndex: number) => {
             return (
               <div key={groupIndex} className="cells-row">
                 {
@@ -29,15 +29,15 @@ export default class Cells extends React.Component<CellsProps, CellsState> {
     )
   }
 
-  cellGroups () {
-    let groups : any[] = []
+  // cellGroups () {
+  //   let groups : any[] = []
 
-    this.props.cells.forEach((value: number, index: number) => {
-      let groupIndex : number = Math.floor(index / 4)
-      groups[groupIndex] = groups[groupIndex] || []
-      groups[groupIndex].push(value)
-    })
+  //   this.props.cells.forEach((value: number, index: number) => {
+  //     let groupIndex : number = Math.floor(index / 5)
+  //     groups[groupIndex] = groups[groupIndex] || []
+  //     groups[groupIndex].push(value)
+  //   })
 
-    return groups
-  }
+  //   return groups
+  // }
 }

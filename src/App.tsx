@@ -8,7 +8,7 @@ interface AppProps {}
 interface AppState {
   score: number,
   addition: number,
-  cells: number[],
+  cells: number[][],
   over: boolean,
   won: boolean
 }
