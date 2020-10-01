@@ -13,7 +13,8 @@
   margin: 0;
 }
 
-.game-header .score-container {
+.game-header .score-container,
+.game-header .level-container {
   position: relative;
   background: #bbada0;
   padding: 15px 25px;
@@ -38,17 +39,25 @@
   animation-fill-mode: both;
 }
 
-.game-header .score-container:after {
+.game-header .score-container:after,
+.game-header .level-container:after {
   position: absolute;
   width: 100%;
   top: 10px;
   left: 0;
-  content: "Score";
   text-transform: uppercase;
   font-size: 13px;
   line-height: 13px;
   text-align: center;
   color: #eee4da;
+}
+
+.game-header .score-container:after {
+  content: "Score";
+}
+
+.game-header .level-container:after {
+  content: "Level";
 }
 
 .game-intro .subtitle {

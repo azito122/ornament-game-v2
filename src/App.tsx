@@ -37,19 +37,15 @@ export default class App extends React.Component<AppProps, AppState> {
       <div className="app">
         <div className="game-header">
           <h1 className="title">
-            Christmas Bonanza
-            {this.state.level}
+            Nature's Ornaments
           </h1>
           <div className="score-container">
             {this.state.score}
-
-            {
-              this.state.addition !== 0 && <div className="score-addition">
-                +{this.state.addition}
-              </div>
-            }
           </div>
-          <Menu />
+          <div className="level-container">
+            {this.state.level}
+          </div>
+          {/* <Menu /> */}
         </div>
 
         <div className="game-intro">
