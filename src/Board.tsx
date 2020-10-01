@@ -141,7 +141,7 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     }
 
     let special = '';
-    if(getRandomInt(1,100) < 20) {
+    if(getRandomInt(1,100) < 5) {
       special = getRandomItem(['borg', 'gold']);
     }
 
@@ -248,11 +248,9 @@ export default class Board extends React.Component<BoardProps, BoardState> {
       });
       this.flushBuffer();
 
-      setTimeout(() => {
-        let bfc = this.fillCells.bind(this);
-        bfc(positions.length)
-      }, 300)
-    }, 1000)
+      let bfc = this.fillCells.bind(this);
+      bfc(positions.length)
+    }, 500)
   }
 
   private boomByType(type:number) {
