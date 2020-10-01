@@ -17,6 +17,7 @@ interface BoardState {
 
 export default class Board extends React.Component<BoardProps, BoardState> {
   private buffer:_Cell[][];
+  private hovered?:Position;
 
   constructor (props:any) {
     super(props)
@@ -29,6 +30,8 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     //   })
     // })
     this.buffer = JSON.parse(JSON.stringify(cells));
+
+    this.hovered = undefined;
 
     this.state = {
       cells: cells,
@@ -89,8 +92,13 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     });
     this.flushBuffer();
 
-    // this.handleHover()
-    setTimeout(this.unlock.bind(this), 1000);
+    setTimeout((() => {
+      this.unlock();
+      if (typeof this.hovered !== 'undefined') {
+        console.log(this.hovered);
+        this.handleHover(this.hovered);
+      }
+    }).bind(this), 200);
   }
 
   fillCell(ns?:number[]):_Cell {
@@ -108,10 +116,7 @@ export default class Board extends React.Component<BoardProps, BoardState> {
   }
 
   handleUnhover (position:Position) {
-    if (this.state.locked) {
-      return;
-    }
-
+    this.hovered = undefined;
     let untargeted = this.calcGroup(position);
     if (untargeted.length >= 3) {
       this.untargetByPositions(untargeted);
@@ -122,6 +127,7 @@ export default class Board extends React.Component<BoardProps, BoardState> {
   }
 
   handleHover (position:Position) {
+    this.hovered = position;
     let targeted = this.calcGroup(position);
     if (targeted.length >= 3) {
       this.targetByPositions(targeted);
