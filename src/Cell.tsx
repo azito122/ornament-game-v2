@@ -1,9 +1,9 @@
 import React from 'react'
-import { Position } from './Util'
+// import { Position } from './Util'
 import './Cell.css'
 
 interface CellProps {
-  position: Position,
+  position: [number,number],
   type: number,
   handleClick: Function,
   handleHover: Function,

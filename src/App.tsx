@@ -85,7 +85,12 @@ export default class App extends React.Component<AppProps, AppState> {
       1000,
       2100,
       3300,
-      4600
+      4600,
+      7000,
+      15000,
+      25000,
+      100000000000,
+
     ]
 
     let add = boomed;
