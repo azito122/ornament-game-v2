@@ -74,7 +74,10 @@
 
 .game-container {
   position: relative;
-  background: #BBADA0;
+  /* background-image: url('https://picsum.photos/1000/1000'); */
+  background-color: #663300;
+  background-size: cover;
+  background-repeat: no-repeat;
   border-radius: 6px;
   margin-top: 40px;
   padding: 15px;

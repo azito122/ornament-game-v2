@@ -1,9 +1,13 @@
 .cells {
   display: table;
+  border-radius: 10px;
+  background-color: rgba(238, 228, 218, .75);
+  margin: auto;
 }
 
 .cells-row {
   display: table-row;
+  white-space: nowrap;
 }
 
 .cells-row:last-child {

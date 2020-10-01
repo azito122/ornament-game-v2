@@ -11,7 +11,7 @@ export class Position {
     if (
       this.x < 0 ||
       this.y < 0 ||
-      this.x >= 10 ||
+      this.x >= 15 ||
       this.y >= 10
     ) {
       return false;

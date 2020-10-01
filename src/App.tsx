@@ -70,7 +70,7 @@ export default class App extends React.Component<AppProps, AppState> {
               </div>
           }
           <Board
-            width={10}
+            width={15}
             height={10}
             addScore={(s:number) => {this.addScore(s)}}
             level={this.state.level}
