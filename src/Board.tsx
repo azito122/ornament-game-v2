@@ -18,29 +18,20 @@ interface BoardState {
 export default class Board extends React.Component<BoardProps, BoardState> {
   private buffer:_Cell[][];
   private hovered?:Position;
+  private targeted?:Position[];
 
   constructor (props:any) {
     super(props)
 
     let emptyCell = new _Cell(0);
     let cells = Array(this.props.height).fill(Array(this.props.width).fill(emptyCell));
-    // cells.forEach((row:_Cell[]) => {
-    //   row.forEach((empty:_Cell) => {
-    //     empty = new _Cell(0);
-    //   })
-    // })
     this.buffer = JSON.parse(JSON.stringify(cells));
-
     this.hovered = undefined;
 
     this.state = {
       cells: cells,
       locked: false,
     }
-  }
-
-  componentDidMount () {
-    this.fillCells();
   }
 
   render () {
@@ -72,7 +63,51 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     )
   }
 
-  fillCells(s?:number) {
+  componentDidMount () {
+    this.fillCells();
+  }
+
+  private handleUnhover (position:Position) {
+    this.hovered = undefined;
+    if (this.targeted && this.targeted.length >= 3) {
+      this.untargetByPositions(this.targeted);
+      if (!this.state.locked) {
+        this.flushBuffer();
+      }
+    }
+    this.targeted = undefined;
+  }
+
+  private handleHover (position:Position) {
+    this.hovered = position;
+    this.targeted = this.findGroupPositions(position);
+    if (this.targeted.length >= 3) {
+      this.targetByPositions(this.targeted);
+      if (!this.state.locked) {
+        this.flushBuffer();
+      }
+    }
+  }
+
+  private handleClick (position:Position) {
+    if (this.state.locked) {
+      return;
+    } else if (this.targeted) {
+      let targeted = this.targeted;
+
+      if (targeted.length >= 3) {
+        this.props.addScore(targeted.length);
+        this.lock(() => {
+          this.boomByPositions(targeted);
+        });
+      } else {
+        this.resetBuffer();
+      }
+    }
+  }
+
+
+  private fillCells(s?:number) {
     let ns:number[];
 
     if (typeof s !== 'undefined') {
@@ -92,115 +127,43 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     });
     this.flushBuffer();
 
-    setTimeout((() => {
-      this.unlock();
-      if (typeof this.hovered !== 'undefined') {
-        console.log(this.hovered);
-        this.handleHover(this.hovered);
-      }
-    }).bind(this), 200);
+    this.unlock();
+
+    if (typeof this.hovered !== 'undefined') {
+      this.handleHover(this.hovered);
+    }
   }
 
-  fillCell(ns?:number[]):_Cell {
+  private fillCell(ns?:number[]):_Cell {
     let type = this.getRandomTileType();
     if (typeof ns !== 'undefined') {
       let type = getRandomItem(ns);
     }
 
     let special = '';
-    if(getRandomInt(1,100) < 4) {
+    if(getRandomInt(1,100) < 20) {
       special = getRandomItem(['borg', 'gold']);
     }
 
     return new _Cell(type, special);
   }
 
-  handleUnhover (position:Position) {
-    this.hovered = undefined;
-    let untargeted = this.calcGroup(position);
-    if (untargeted.length >= 3) {
-      this.untargetByPositions(untargeted);
-      if (!this.state.locked) {
-        this.flushBuffer();
-      }
-    }
-  }
-
-  handleHover (position:Position) {
-    this.hovered = position;
-    let targeted = this.calcGroup(position);
-    if (targeted.length >= 3) {
-      this.targetByPositions(targeted);
-      if (!this.state.locked) {
-        this.flushBuffer();
-      }
-    }
-  }
-
   private targetByPositions(targeted:Position[]) {
-    targeted.forEach((p:Position) => {this.targetByPosition(p)});
-  }
-
-  private targetByPosition(position:Position) {
-    let cell = this.getCell(position);
-    this.targetCell(cell);
-  }
-
-  private targetCell(cell:_Cell) {
-    cell.status = 'targeted';
+    targeted.forEach((p:Position) => {
+      let cell = this.getCell(p);
+      cell.status = 'targeted';
+    });
   }
 
   private untargetByPositions(targeted:Position[]) {
-    targeted.forEach((p:Position) => {this.untargetByPosition(p)});
+    targeted.forEach((p:Position) => {
+      let cell = this.getCell(p);
+      cell.status = '';
+    });
   }
 
-  private untargetByPosition(position:Position) {
-    let cell = this.getCell(position);
-    this.untargetCell(cell);
-  }
 
-  private untargetCell(cell:_Cell) {
-    cell.status = '';
-  }
-
-  handleClick (position:Position) {
-    if (this.state.locked) {
-      return;
-    } else {
-      let toBoom = this.calcGroup(position);
-
-      if (toBoom.length >= 3) {
-        this.lock(() => {
-          this.boom(toBoom);
-        });
-      } else {
-        this.resetBuffer();
-      }
-    }
-  }
-
-  private boom(toBoom:Position[]) {
-      this.preBoomByPositions(toBoom);
-      this.flushBuffer();
-
-      setTimeout(() => {
-        this._boom(toBoom);
-      }, 1000)
-  }
-
-  private _boom (toBoom:Position[]) {
-    this.boomByPositions(toBoom);
-    this.props.addScore(toBoom.length);
-
-    this.flushBuffer();
-
-    setTimeout(() => {
-      let bfc = this.fillCells.bind(this);
-      bfc(toBoom.length)
-    }, 300)
-  }
-
-  private calcGroup(start:Position) {
+  private findGroupPositions(start:Position):Position[] {
     let startCell = this.getCell(start);
     let findType = startCell.type;
     let searchSpace = deepCopy(this.buffer)
@@ -208,6 +171,17 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     return this.findMatchingAdjacent(searchSpace,start,findType,[])
   }
 
+  private findTypePositions(type:number):Position[] {
+    let found:Position[] = [];
+    this.buffer.forEach((row:_Cell[], y:number) => {
+      row.forEach((cell:_Cell, x:number) => {
+        if (cell.type === type) {
+          found.push(new Position(x,y));
+        }
+      })
+    })
+    return found;
+  }
 
   private findMatchingAdjacent(searchSpace:&_Cell[][], start:Position, findType:number, found:Position[]):Position[] {
     if (searchSpace[start.y][start.x].type === 0) {
@@ -242,65 +216,48 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     })
   }
 
-  private preBoomByPositions(positions:Position[]) {
-    positions.forEach((p:Position) => {this.preBoomByPosition(p)});
-  }
-
   private boomByPositions(positions:Position[]) {
-    positions.forEach((p:Position) => {this.boomByPosition(p)});
+    let additionalBoom:Position[] = [];
+    positions.forEach((position:Position) => {
+      let cell = this.getCell(position);
+      cell.status = 'booming';
+
+      if (cell.special === 'borg') {
+        let test = cell ?? 'test';
+        // additionalBoom = additionalBoom ?? this.findTypePositions(cell.type);
+      } else if (cell.special === 'gold') {
+        this.props.addScore(15)
+      }
+  });
+
+    this.flushBuffer();
+
+    setTimeout(() => {
+      positions.forEach((position:Position) => {
+        let cell = this.getCell(position);
+        let cType = cell.type;
+        let cSpecial = cell.special;
+
+        cell.type = 0;
+        cell.special = '';
+        cell.status = 'booming';
+      });
+      this.flushBuffer();
+
+      setTimeout(() => {
+        let bfc = this.fillCells.bind(this);
+        bfc(positions.length)
+      }, 300)
+    }, 1000)
   }
 
-  private preBoomByPosition(position:Position) {
-    let cell = this.getCell(position);
-    this.preBoomCell(cell);
-  }
-
-  private boomByPosition(position:Position) {
-    let cell = this.getCell(position);
-    this.boomCell(cell);
-  }
-
-  private preBoomCell(cell:&_Cell) {
-    cell.status = 'booming';
-  }
-
-  private boomCell(cell:&_Cell) {
-    let cType = cell.type;
-    let cSpecial = cell.special;
-    cell.type = 0;
-    cell.special = '';
-    cell.status = 'booming';
-
-    if (cSpecial === 'borg') {
-      this.boomAllOfType(cType)
-    } else if (cSpecial === 'gold') {
-      this.props.addScore(15)
-    }
-  }
-
-  private boomAllOfType(type:number) {
-    console.log('Boom all of type', type);
-    this.buffer.forEach((row:_Cell[]) => {
-      row.forEach((cell:_Cell) => {
-        if (cell.type === type) {
-          // console.log('boom cell', cell);
-          this.boomCell(cell);
-        }
-      })
-    })
+  private boomByType(type:number) {
+    this.boomByPositions(this.findTypePositions(type));
     this.flushBuffer();
   }
 
   private getCell(p:Position):_Cell {
     return this.buffer[p.y][p.x];
-  }
-
-  private getCellType(p:Position):number {
-    return this.getCell(p).type;
-  }
-
-  private setCellType(p:Position, type:number) {
-    this.getCell(p).type = type;
   }
 
   private flushBuffer() {

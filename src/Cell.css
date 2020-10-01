@@ -1,15 +1,11 @@
 .cell {
-  /* box-sizing: border-box; */
   display: table-cell;
   text-align: center;
   font-size: 55px;
   background-color: rgba(238, 228, 218, .35);
   font-weight: bold;
-  /* border-radius: 3px; */
   width: 50px;
   height: 50px;
-  /* padding-right: 15px;
-  padding-bottom: 15px; */
   padding: 7px;
   display: inline-flex;
   justify-content: center;
@@ -20,12 +16,12 @@
   opacity: 1;
   transition: opacity 1s;
   display: block;
-  border-radius: 100%;
+  border-radius: 20%;
   box-sizing: border-box;
   width: 100%;
   height: 100%;
   background-position: center center;
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
 }
 
@@ -37,23 +33,23 @@
 }
 
 .cell-type-1 span {
-  background-image: url('https://library.kissclipart.com/20180918/wtq/kissclipart-rock-sprite-png-clipart-clip-art-4bb24258a61cdb99.jpg');
+  background-image: url('http://pngimg.com/uploads/sunflower/sunflower_PNG13401.png');
 }
 
 .cell-type-2 span {
-  background-image: url('https://www.clipartmax.com/png/middle/4-43475_christmas-pine-clipart-pinecone-clipart.png');
+  background-image: url('http://pngimg.com/uploads/acorn/acorn_PNG37007.png');
 }
 
 .cell-type-3 span {
-  background-image: url('https://banner2.cleanpng.com/20180419/oyw/kisspng-computer-icons-leaf-clip-art-lotus-leaves-5ad93eb2412372.0423555215241868022668.jpg');
+  background-image: url('http://pngimg.com/uploads/green_leaves/green_leaves_PNG3678.png');
 }
 
 .cell-type-4 span {
-  background-image: url('https://banner2.cleanpng.com/20180405/aie/kisspng-snowflake-ice-crystals-ice-crystals-snowflake-5ac6ae16b3bb17.6102365215229701347362.jpg');
+  background-image: url('http://pngimg.com/uploads/snowflakes/snowflakes_PNG7545.png');
 }
 
 .cell-type-5 span {
-  background-color: violet;
+  background-image: url('https://img.pngio.com/toadstool-png-hd-transparent-toadstool-hdpng-images-pluspng-toadstool-png-3251_3825.png');
 }
 
 .cell-type-6 span {
@@ -86,8 +82,8 @@
   opacity: 1;
 }
 
-.cell-status-targeted {
-  background-color: white;
+.cell-status-targeted span {
+  background-color: rgba(255,255,255,0.5);
 }
 
 .cell:hover {
