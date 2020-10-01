@@ -220,15 +220,19 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     let additionalBoom:Position[] = [];
     positions.forEach((position:Position) => {
       let cell = this.getCell(position);
-      cell.status = 'booming';
-
       if (cell.special === 'borg') {
-        let test = cell ?? 'test';
-        // additionalBoom = additionalBoom ?? this.findTypePositions(cell.type);
+        additionalBoom = additionalBoom.length > 0 ? additionalBoom : this.findTypePositions(cell.type);
       } else if (cell.special === 'gold') {
         this.props.addScore(15)
       }
-  });
+    });
+    positions = positions.concat(additionalBoom);
+
+    positions.forEach((position:Position) => {
+      let cell = this.getCell(position);
+      cell.status = 'booming';
+    })
+
 
     this.flushBuffer();
 
