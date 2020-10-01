@@ -12,6 +12,7 @@ interface BoardProps {
 
 interface BoardState {
   cells: _Cell[][],
+  locked: boolean,
 }
 
 export default class Board extends React.Component<BoardProps, BoardState> {
@@ -31,6 +32,7 @@ export default class Board extends React.Component<BoardProps, BoardState> {
 
     this.state = {
       cells: cells,
+      locked: false,
     }
   }
 
@@ -48,10 +50,13 @@ export default class Board extends React.Component<BoardProps, BoardState> {
                 {
                   cells.map((cell: _Cell, cellIndex: number) => {
                     return <Cell
+                      status={cell.status}
                       position={new Position(cellIndex,groupIndex)}
                       key={groupIndex * 4 + cellIndex}
                       type={cell.type}
-                      boom={(p:Position,v:number)=>{this.boom(p,v)}}
+                      handleClick={(p:Position)=>{this.handleClick(p)}}
+                      handleHover={(p:Position)=>{this.handleHover(p)}}
+                      handleUnhover={(p:Position)=>{this.handleUnhover(p)}}
                       special={cell.special}
                     />
                   })
@@ -76,46 +81,117 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     }
 
     this.buffer.forEach( (r:_Cell[]) => {
-      r.forEach( (c:_Cell) => {
+      r.forEach( (c:_Cell, i:number) => {
         if (c.type === 0) {
-          c.type = this.fillCell(ns);
-          c.special = this.cellSpecialize();
+          r[i] = this.fillCell(ns);
         }
       })
     });
     this.flushBuffer();
+
+    // this.handleHover()
+    setTimeout(this.unlock.bind(this), 1000);
   }
 
-  private cellSpecialize() {
+  fillCell(ns?:number[]):_Cell {
+    let type = this.getRandomTileType();
+    if (typeof ns !== 'undefined') {
+      let type = getRandomItem(ns);
+    }
+
+    let special = '';
     if(getRandomInt(1,100) < 4) {
-      return getRandomItem(['borg', 'gold']);
+      special = getRandomItem(['borg', 'gold']);
+    }
+
+    return new _Cell(type, special);
+  }
+
+  handleUnhover (position:Position) {
+    if (this.state.locked) {
+      return;
+    }
+
+    let untargeted = this.calcGroup(position);
+    if (untargeted.length >= 3) {
+      this.untargetByPositions(untargeted);
+      if (!this.state.locked) {
+        this.flushBuffer();
+      }
     }
   }
 
-  fillCell(ns?:number[]):number {
-    if (typeof ns === 'undefined') {
-      return this.getRandomTileType();
+  handleHover (position:Position) {
+    let targeted = this.calcGroup(position);
+    if (targeted.length >= 3) {
+      this.targetByPositions(targeted);
+      if (!this.state.locked) {
+        this.flushBuffer();
+      }
+    }
+  }
+
+  private targetByPositions(targeted:Position[]) {
+    targeted.forEach((p:Position) => {this.targetByPosition(p)});
+  }
+
+  private targetByPosition(position:Position) {
+    let cell = this.getCell(position);
+    this.targetCell(cell);
+  }
+
+  private targetCell(cell:_Cell) {
+    cell.status = 'targeted';
+  }
+
+  private untargetByPositions(targeted:Position[]) {
+    targeted.forEach((p:Position) => {this.untargetByPosition(p)});
+  }
+
+  private untargetByPosition(position:Position) {
+    let cell = this.getCell(position);
+    this.untargetCell(cell);
+  }
+
+  private untargetCell(cell:_Cell) {
+    cell.status = '';
+  }
+
+  handleClick (position:Position) {
+    if (this.state.locked) {
+      return;
     } else {
-      return getRandomItem(ns);
+      let toBoom = this.calcGroup(position);
+
+      if (toBoom.length >= 3) {
+        this.lock(() => {
+          this.boom(toBoom);
+        });
+      } else {
+        this.resetBuffer();
+      }
     }
   }
 
-  boom (position:Position, baseValue:number) {
-    let toBoom = this.calcGroup(position);
-
-    if (toBoom.length >= 3) {
-      this.boomByPositions(toBoom);
-      this.props.addScore(toBoom.length);
-
+  private boom(toBoom:Position[]) {
+      this.preBoomByPositions(toBoom);
       this.flushBuffer();
 
       setTimeout(() => {
-        let bfc = this.fillCells.bind(this);
-        bfc(toBoom.length)
-      }, 700)
-    } else {
-      this.resetBuffer();
-    }
+        this._boom(toBoom);
+      }, 1000)
+  }
+
+  private _boom (toBoom:Position[]) {
+    this.boomByPositions(toBoom);
+    this.props.addScore(toBoom.length);
+
+    this.flushBuffer();
+
+    setTimeout(() => {
+      let bfc = this.fillCells.bind(this);
+      bfc(toBoom.length)
+    }, 300)
   }
 
   private calcGroup(start:Position) {
@@ -160,8 +236,17 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     })
   }
 
+  private preBoomByPositions(positions:Position[]) {
+    positions.forEach((p:Position) => {this.preBoomByPosition(p)});
+  }
+
   private boomByPositions(positions:Position[]) {
     positions.forEach((p:Position) => {this.boomByPosition(p)});
+  }
+
+  private preBoomByPosition(position:Position) {
+    let cell = this.getCell(position);
+    this.preBoomCell(cell);
   }
 
   private boomByPosition(position:Position) {
@@ -169,11 +254,16 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     this.boomCell(cell);
   }
 
+  private preBoomCell(cell:&_Cell) {
+    cell.status = 'booming';
+  }
+
   private boomCell(cell:&_Cell) {
     let cType = cell.type;
     let cSpecial = cell.special;
     cell.type = 0;
     cell.special = '';
+    cell.status = 'booming';
 
     if (cSpecial === 'borg') {
       this.boomAllOfType(cType)
@@ -223,5 +313,17 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     let max = this.props.level + 4 >= maxmax ? maxmax : this.props.level + 4;
     let r = getRandomInt(1,this.props.level + 4);
     return r >= max ? max : r;
+  }
+
+  private lock(callback?:(() => void)):void {
+    this.setState(() => {
+      return {locked: true}
+    }, callback)
+  }
+
+  private unlock(callback?:(() => void)):void {
+    this.setState(() => {
+      return {locked: false}
+    }, callback)
   }
 }

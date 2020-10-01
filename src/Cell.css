@@ -1,118 +1,96 @@
 .cell {
+  /* box-sizing: border-box; */
   display: table-cell;
   text-align: center;
   font-size: 55px;
   background-color: rgba(238, 228, 218, .35);
   font-weight: bold;
-  border-radius: 3px;
+  /* border-radius: 3px; */
   width: 50px;
   height: 50px;
-  margin-right: 15px;
-  margin-bottom: 15px;
+  /* padding-right: 15px;
+  padding-bottom: 15px; */
+  padding: 7px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
 }
 
 .cell span {
-  transition: background-color .3s;
+  opacity: 1;
+  transition: opacity 1s;
   display: block;
-  border-radius: 1000px;
+  border-radius: 100%;
   box-sizing: border-box;
   width: 100%;
   height: 100%;
-  animation-fill-mode: forwards;
-  animation-timing-function: step-end;
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
-  animation-duration: 1s;
 }
 
 .cell:last-child {
   margin-right: 0;
 }
 
-.cell-0 span {
-  background-color: transparent;
+.cell-type-0 span {
 }
 
-@keyframes one {
-  0% {
-    /* background-image: url('https://i.gifer.com/HKwG.gif'); */
-    background-color: blue;
-  }
-  100% {
-    background-image: url('https://library.kissclipart.com/20180918/wtq/kissclipart-rock-sprite-png-clipart-clip-art-4bb24258a61cdb99.jpg');
-  }
+.cell-type-1 span {
+  background-image: url('https://library.kissclipart.com/20180918/wtq/kissclipart-rock-sprite-png-clipart-clip-art-4bb24258a61cdb99.jpg');
 }
 
-.cell-1 span {
-  animation-name: one;
+.cell-type-2 span {
+  background-image: url('https://www.clipartmax.com/png/middle/4-43475_christmas-pine-clipart-pinecone-clipart.png');
 }
 
-@keyframes two {
-  0% {
-    /* background-image: url('https://i.gifer.com/HKwG.gif'); */
-    background-color: red;
-  }
-  100% {
-    background-image: url('https://www.clipartmax.com/png/middle/4-43475_christmas-pine-clipart-pinecone-clipart.png');
-  }
+.cell-type-3 span {
+  background-image: url('https://banner2.cleanpng.com/20180419/oyw/kisspng-computer-icons-leaf-clip-art-lotus-leaves-5ad93eb2412372.0423555215241868022668.jpg');
 }
 
-.cell-2 span {
-  animation-name: two;
+.cell-type-4 span {
+  background-image: url('https://banner2.cleanpng.com/20180405/aie/kisspng-snowflake-ice-crystals-ice-crystals-snowflake-5ac6ae16b3bb17.6102365215229701347362.jpg');
 }
 
-@keyframes three {
-  0% {
-    /* background-image: url('https://i.gifer.com/HKwG.gif'); */
-    background-color: green;
-  }
-  100% {
-    background-image: url('https://banner2.cleanpng.com/20180419/oyw/kisspng-computer-icons-leaf-clip-art-lotus-leaves-5ad93eb2412372.0423555215241868022668.jpg');
-  }
-}
-
-.cell-3 span {
-  animation-name: three;
-}
-
-@keyframes four {
-  0% {
-    /* background-image: url('https://i.gifer.com/HKwG.gif'); */
-    background-color: white;
-  }
-  100% {
-    background-image: url('https://banner2.cleanpng.com/20180405/aie/kisspng-snowflake-ice-crystals-ice-crystals-snowflake-5ac6ae16b3bb17.6102365215229701347362.jpg');
-  }
-}
-
-.cell-4 span {
-  animation-name: four;
-}
-
-.cell-5 span {
+.cell-type-5 span {
   background-color: violet;
 }
 
-.cell-6 span {
+.cell-type-6 span {
   background-color: lime;
 }
 
-.cell-7 span {
+.cell-type-7 span {
   background-color: brown;
 }
 
-.cell-8 span {
+.cell-type-8 span {
   background-color: orange;
 }
 
-.cell-borg span {
+.cell-special-borg span {
   border: 2px solid black;
 }
 
-.cell-gold span {
+.cell-special-gold span {
   border: 2px solid gold;
+}
+
+.cell-status-booming span {
+  transition: opacity .3s;
+  opacity: 0;
+}
+
+.cell-status-filling span {
+  transition: opacity 1s;
+  opacity: 1;
+}
+
+.cell-status-targeted {
+  background-color: white;
+}
+
+.cell:hover {
+  outline: 1px solid grey;
+  z-index: 1000;
 }
