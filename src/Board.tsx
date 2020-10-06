@@ -69,19 +69,24 @@ export default class Board extends React.Component<BoardProps, BoardState> {
 
   private handleUnhover (position:[number,number]) {
     this.hovered = undefined;
+    this.clearTargeted();
+  }
+
+  private clearTargeted () {
     if (this.targeted && this.targeted.length >= 3) {
       this.untargetByPositions(this.targeted);
       if (!this.state.locked) {
         this.flushBuffer();
       }
     }
+
     this.targeted = undefined;
   }
 
   private handleHover (position:[number,number]) {
     this.hovered = position;
+
     let found = this.findGroupPositions(position);
-    console.log(found);
 
     if (found[0].length >= 3) {
       this.targeted = found[1];
@@ -96,7 +101,8 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     if (this.state.locked) {
       return;
     } else if (this.targeted) {
-      let targeted = this.targeted;
+      let targeted = deepCopy(this.targeted);
+      this.targeted = undefined;
 
       if (targeted.length >= 3) {
         this.props.addScore(targeted.length);
@@ -108,7 +114,6 @@ export default class Board extends React.Component<BoardProps, BoardState> {
       }
     }
   }
-
 
   private fillCells(s?:number) {
     let ns:number[];
@@ -133,6 +138,8 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     this.unlock();
 
     if (typeof this.hovered !== 'undefined') {
+      // this.handleUnhover(this.hovered);
+      this.clearTargeted();
       this.handleHover(this.hovered);
     }
   }
@@ -193,7 +200,6 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     found:[number,number][]):[number,number][][]
   {
     if (searchSpace[start[1]][start[0]].type === 0) {
-      console.log('term');
       return [foundAdjacent,found];
     }
 
