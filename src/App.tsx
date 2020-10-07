@@ -12,6 +12,8 @@ interface AppState {
   addition: number,
   over: boolean,
   won: boolean,
+  season: number,
+  tilNextSeason: number,
 }
 
 export default class App extends React.Component<AppProps, AppState> {
@@ -23,11 +25,17 @@ export default class App extends React.Component<AppProps, AppState> {
       score: 0,
       over: false,
       won: false,
-      addition: 0
+      addition: 0,
+      season: 0,
+      tilNextSeason: 5000,
     }
   }
 
-  componentDidMount () {  }
+  componentDidMount () {
+    setTimeout(() => {
+      this.seasonTick();
+    }, 1000)
+  }
 
   componentWillUnmount () {
   }
@@ -45,6 +53,9 @@ export default class App extends React.Component<AppProps, AppState> {
           <div className="level-container">
             {this.state.level}
           </div>
+          <div>
+            Season: {this.getSeasonString(this.state.season)}
+          </div>
           {/* <Menu /> */}
         </div>
 
@@ -52,7 +63,7 @@ export default class App extends React.Component<AppProps, AppState> {
           {/* <button className="restart-button" onClick={this.restart}>New Board</button> */}
         </div>
 
-        <div className="game-container">
+        <div className={`game-container season-${this.getSeasonString(this.state.season).toLowerCase()}`}>
           {
             (this.state.won || this.state.over) &&
               <div className={`game-message game-${(this.state.won && 'won') || (this.state.over && 'over')}`}>
@@ -121,6 +132,42 @@ export default class App extends React.Component<AppProps, AppState> {
         score: newScore,
         level: level,
       }
+    })
+  }
+
+  private getSeasonString(seasonId:number):string {
+    switch (seasonId) {
+      case 0:
+        return 'Spring';
+      case 1:
+        return 'Summer';
+      case 2:
+        return 'Fall';
+      case 3:
+        return 'Winter';
+      default:
+        return 'Spring';
+    }
+  }
+
+  private seasonTick() {
+    this.setState((state) => {
+      console.log(state.season, state.tilNextSeason);
+      // let newSeason = state.season;
+
+      let result = {};
+      if (state.tilNextSeason <= 0) {
+        result = {
+          season: state.season >= 3 ? 0 : state.season + 1,
+          tilNextSeason: 5000,
+        }
+      } else {
+        result = {
+          tilNextSeason: state.tilNextSeason - 1000,
+        }
+      }
+      setTimeout(this.seasonTick.bind(this), 1000);
+      return result;
     })
   }
 }

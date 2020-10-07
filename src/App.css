@@ -84,12 +84,27 @@
 .game-container {
   position: relative;
   /* background-image: url('https://picsum.photos/1000/1000'); */
-  background-color: #663300;
   background-size: cover;
   background-repeat: no-repeat;
   border-radius: 6px;
   margin-top: 40px;
   padding: 15px;
+}
+
+.game-container.season-spring {
+  background-color: #15a128;
+}
+
+.game-container.season-fall {
+  background-color: #663300;
+}
+
+.game-container.season-summer {
+  background-color: #eded34;
+}
+
+.game-container.season-winter {
+  background-color: #c4fdff;
 }
 
 .game-container .game-message {
