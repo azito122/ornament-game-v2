@@ -32,19 +32,19 @@
 }
 
 .cell-type-1 span {
-  background-image: url('http://pngimg.com/uploads/sunflower/sunflower_PNG13401.png');
+  background-image: url('/flower1.png');
 }
 
 .cell-type-2 span {
-  background-image: url('http://pngimg.com/uploads/acorn/acorn_PNG37007.png');
+  background-image: url('/acorn2.png');
 }
 
 .cell-type-3 span {
-  background-image: url('http://pngimg.com/uploads/green_leaves/green_leaves_PNG3678.png');
+  background-image: url('/leaf1.png');
 }
 
 .cell-type-4 span {
-  background-image: url('http://pngimg.com/uploads/snowflakes/snowflakes_PNG7545.png');
+  background-image: url('/pinecone1.png');
 }
 
 .cell-type-5 span {
