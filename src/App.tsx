@@ -47,15 +47,6 @@ export default class App extends React.Component<AppProps, AppState> {
           <h1 className="title">
             Nature's Ornaments
           </h1>
-          <div className="score-container">
-            {this.state.score}
-          </div>
-          <div className="level-container">
-            {this.state.level}
-          </div>
-          <div>
-            Season: {this.getSeasonString(this.state.season)}
-          </div>
           <Menu />
         </div>
 
@@ -82,6 +73,17 @@ export default class App extends React.Component<AppProps, AppState> {
             addScore={(s:number) => {this.addScore(s)}}
             level={this.state.level}
           />
+          <div className="sidebar">
+            <div className="score-container">
+              {this.state.score}
+            </div>
+            <div className="level-container">
+              {this.state.level}
+            </div>
+            <div>
+              Season: {this.getSeasonString(this.state.season)}
+            </div>
+          </div>
         </div>
 
         <p className="game-explanation">
