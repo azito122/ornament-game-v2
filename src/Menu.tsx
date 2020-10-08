@@ -1,6 +1,6 @@
 import React from 'react'
 // import { Position } from './Util'
-import './Menu.css'
+import './Menu.scss'
 
 interface MenuProps {
 }

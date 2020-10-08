@@ -1,7 +1,7 @@
 import React from 'react'
 import Board from './Board'
 import Menu from './Menu'
-import './App.css'
+import './App.scss'
 
 interface AppProps {
 }
@@ -56,7 +56,7 @@ export default class App extends React.Component<AppProps, AppState> {
           <div>
             Season: {this.getSeasonString(this.state.season)}
           </div>
-          {/* <Menu /> */}
+          <Menu />
         </div>
 
         <div className="game-intro">

@@ -1,6 +1,6 @@
 import React from 'react'
 // import { Position } from './Util'
-import './Cell.css'
+import './Cell.scss'
 
 interface CellProps {
   position: [number,number],

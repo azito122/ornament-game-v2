@@ -1,7 +1,7 @@
 import React from 'react'
 import { getRandomInt, getRandomItem, deepCopy, onBoard } from './Util'
 import { Cell, _Cell } from './Cell'
-import './Board.css'
+import './Board.scss'
 
 interface BoardProps {
   width: number,
