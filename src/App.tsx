@@ -90,6 +90,9 @@ export default class App extends React.Component<AppProps, AppState> {
             </div>
             <div>
               Season: {this.getSeasonString(this.state.season)}
+              <div className="loading-bar"><span
+                style={{width:(this.state.tilNextSeason/this.props.seasonGap)*100}}
+              ></span></div>
             </div>
           </div>
         </div>

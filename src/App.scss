@@ -149,3 +149,16 @@
 .important {
   text-transform: uppercase;
 }
+
+.loading-bar {
+  display: block;
+  width: 100%;
+  border: 1px solid black;
+  height: 10px;
+
+  span {
+    height: 100%;
+    display: block;
+    background-color: white;
+  }
+}
