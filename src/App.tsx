@@ -164,6 +164,9 @@ export default class App extends React.Component<AppProps, AppState> {
 
   private seasonTick() {
     this.setState((state) => {
+      if (this.getConfig('pause-seasons', true)) {
+        return;
+      }
       let result = {};
       if (state.tilNextSeason <= 0) {
         result = {
@@ -175,10 +178,7 @@ export default class App extends React.Component<AppProps, AppState> {
           tilNextSeason: state.tilNextSeason - 1000,
         }
       }
-      console.log("Season tick?", !this.getConfig('pause-seasons', true));
-      if (!this.getConfig('pause-seasons', true)) {
-        setTimeout(this.seasonTick.bind(this), 1000);
-      }
+      setTimeout(this.seasonTick.bind(this), 1000);
       return result;
     })
   }
