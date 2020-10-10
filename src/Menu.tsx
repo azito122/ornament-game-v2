@@ -1,8 +1,11 @@
 import React from 'react'
-// import { Position } from './Util'
 import './Menu.scss'
+import { Config } from './Util';
 
 interface MenuProps {
+  setConfig: Function,
+  getConfig: Function,
+  config: Config,
 }
 
 interface MenuState {
@@ -23,12 +26,15 @@ export default class Menu extends React.Component<MenuProps, MenuState> {
     <div className="menu-wrapper">
       <div className="menu-icon" onClick={this.open.bind(this)}></div>
       <div className={`menu ${this.state.visible ? 'menu-visible' : ''}`}>
-        <ul>
-          <li>Test</li>
-          <li>Test</li>
-          <li>Test</li>
-          <li>Test</li>
-        </ul>
+        <div className="menu-items-wrapper">
+          <label htmlFor="pause-seasons">Pause seasons</label>
+          <input
+            name="pause-seasons" id="pause-seasons"
+            type="checkbox"
+            value={this.props.config.getString('pause-seasons', 'false')}
+            onChange={(event) => {this.props.setConfig('pause-seasons', event.target.value)}}
+          />
+        </div>
       </div>
     </div>
     )
@@ -38,5 +44,9 @@ export default class Menu extends React.Component<MenuProps, MenuState> {
     this.setState((state) => {
       return {visible: !state.visible}
     })
+  }
+
+  private setConfig(id:string, value:any) {
+    this.props.setConfig(id, value);
   }
 }

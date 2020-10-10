@@ -2,6 +2,7 @@ import React from 'react'
 import Board from './Board'
 import Menu from './Menu'
 import './App.scss'
+import { Config, configValue, configValues } from './Util'
 
 interface AppProps {
 }
@@ -14,6 +15,7 @@ interface AppState {
   won: boolean,
   season: number,
   tilNextSeason: number,
+  config: Config,
 }
 
 export default class App extends React.Component<AppProps, AppState> {
@@ -28,6 +30,9 @@ export default class App extends React.Component<AppProps, AppState> {
       addition: 0,
       season: 0,
       tilNextSeason: 5000,
+      config: new Config({
+        'pause-seasons': false,
+      }),
     }
   }
 
@@ -47,7 +52,11 @@ export default class App extends React.Component<AppProps, AppState> {
           <h1 className="title">
             Nature's Ornaments
           </h1>
-          <Menu />
+          <Menu
+            getConfig={(id:string, defaultv:string) => {this.getConfig(id, defaultv)}}
+            setConfig={(id:string, value:string) => {this.setConfig(id, value)}}
+            config={this.state.config}
+          />
         </div>
 
         <div className="game-intro">
@@ -154,9 +163,6 @@ export default class App extends React.Component<AppProps, AppState> {
 
   private seasonTick() {
     this.setState((state) => {
-      console.log(state.season, state.tilNextSeason);
-      // let newSeason = state.season;
-
       let result = {};
       if (state.tilNextSeason <= 0) {
         result = {
@@ -168,8 +174,38 @@ export default class App extends React.Component<AppProps, AppState> {
           tilNextSeason: state.tilNextSeason - 1000,
         }
       }
-      setTimeout(this.seasonTick.bind(this), 1000);
+      if (!this.getConfig('pause-seasons', true)) {
+        setTimeout(this.seasonTick.bind(this), 1000);
+      }
       return result;
     })
+  }
+
+  private setConfig(id:string, value:string) {
+    console.log('setConfig', id, value);
+    this.setState((state) => {
+      return {
+        config: state.config.set(id, value),
+      }
+    }, () => {
+      this.handleConfigUpdate(id, value);
+    })
+
+  }
+
+  private handleConfigUpdate(id:string, value:configValue) {
+    switch(id) {
+      case 'pause-seasons':
+        if (value) {
+          this.seasonTick();
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  private getConfig(id:string, defaultv?:configValue) {
+    return this.state.config.get(id, defaultv);
   }
 }

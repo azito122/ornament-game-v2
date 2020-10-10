@@ -1,24 +1,33 @@
-// export class Position {
-//   public x:number;
-//   public y:number;
+export type configValue = string|boolean;
+export type configValues = { [key: string]: configValue }
 
-//   constructor(x:number,y:number) {
-//     this.x = x;
-//     this.y = y;
-//   }
+export class Config {
+  private values:configValues = {};
 
-//   public onBoard(): boolean {
-//     if (
-//       this.x < 0 ||
-//       this.y < 0 ||
-//       this.x >= 11 ||
-//       this.y >= 7
-//     ) {
-//       return false;
-//     }
-//     return true;
-//   }
-// }
+  constructor(initialValues:configValues) {
+    this.values = deepCopy(initialValues);
+  }
+
+  public get(id:string, defaultv:configValue = false) {
+    let val = this.values[id];
+    if (typeof val === 'undefined' || val === null) {
+      return defaultv;
+    } else {
+      return val;
+    }
+  }
+
+  public getString(id:string, defaultv:string = ''):string {
+    let val = this.get(id);
+    return String(val);
+  }
+
+  public set(id:string, value:configValue) {
+    console.log('set', id, value);
+    this.values[id] = value;
+    return this;
+  }
+}
 
 export function getRandomInt(min:number, max:number): number {
   return Math.floor(Math.random() * (max - min) + min);
