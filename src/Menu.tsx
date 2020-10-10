@@ -32,7 +32,7 @@ export default class Menu extends React.Component<MenuProps, MenuState> {
             name="pause-seasons" id="pause-seasons"
             type="checkbox"
             value={this.props.config.getString('pause-seasons', 'false')}
-            onChange={(event) => {this.props.setConfig('pause-seasons', event.target.value)}}
+            onChange={(event) => {this.props.setConfig('pause-seasons', event.target.checked)}}
           />
         </div>
       </div>
@@ -44,9 +44,5 @@ export default class Menu extends React.Component<MenuProps, MenuState> {
     this.setState((state) => {
       return {visible: !state.visible}
     })
-  }
-
-  private setConfig(id:string, value:any) {
-    this.props.setConfig(id, value);
   }
 }
