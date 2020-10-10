@@ -11,4 +11,6 @@ import '@babel/plugin-proposal-nullish-coalescing-operator'
 // window.ornamentV2 = window.ornamentV2 || {};
 
 // window.ornamentV2.app = <App />;
-ReactDOM.render(<App />, document.getElementById('root'))
+ReactDOM.render(<App
+  seasonGap={5000}
+/>, document.getElementById('root'))

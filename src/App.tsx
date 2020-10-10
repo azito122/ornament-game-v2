@@ -5,6 +5,7 @@ import Menu from './Menu'
 import React from 'react'
 
 interface AppProps {
+  seasonGap: number,
 }
 
 interface AppState {
@@ -27,7 +28,7 @@ export default class App extends React.Component<AppProps, AppState> {
       over         : false,
       won          : false,
       season       : 0,
-      tilNextSeason: 5000,
+      tilNextSeason: props.seasonGap,
       config       : new Config({
         'pause-seasons': false,
       }),
@@ -164,7 +165,7 @@ export default class App extends React.Component<AppProps, AppState> {
       if (state.tilNextSeason <= 0) {
         result = {
           season: state.season >= 3 ? 0 : state.season + 1,
-          tilNextSeason: 5000,
+          tilNextSeason: this.props.seasonGap,
         }
       } else {
         result = {
