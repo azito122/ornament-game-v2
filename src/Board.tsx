@@ -17,8 +17,8 @@ interface BoardState {
 
 export default class Board extends React.Component<BoardProps, BoardState> {
   private buffer:_Cell[][];
-  private hovered?:[number,number];
-  private targeted?:[number,number][];
+  private hoveredCells?:[number,number];
+  private targetedCells?:[number,number][];
 
   constructor (props:any) {
     super(props)
@@ -26,7 +26,7 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     let emptyCell = new _Cell(0);
     let cells = Array(this.props.height).fill(Array(this.props.width).fill(emptyCell));
     this.buffer = JSON.parse(JSON.stringify(cells));
-    this.hovered = undefined;
+    this.hoveredCells = undefined;
 
     this.state = {
       cells: cells,
@@ -68,28 +68,28 @@ export default class Board extends React.Component<BoardProps, BoardState> {
   }
 
   private handleUnhover (position:[number,number]) {
-    this.hovered = undefined;
+    this.hoveredCells = undefined;
     this.clearTargeted();
   }
 
   private clearTargeted () {
-    if (this.targeted && this.targeted.length >= 3) {
-      this.untargetByPositions(this.targeted);
+    if (this.targetedCells && this.targetedCells.length >= 3) {
+      this.untargetByPositions(this.targetedCells);
       if (!this.state.locked) {
         this.flushBuffer();
       }
     }
 
-    this.targeted = undefined;
+    this.targetedCells = undefined;
   }
 
   private handleHover (position:[number,number]) {
-    this.hovered = position;
+    this.hoveredCells = position;
 
     let found = this.findGroupPositions(position);
 
     if (found[0].length >= 3) {
-      this.targeted = found[1];
+      this.targetedCells = found[1];
       this.targetByPositions(found[1]);
       if (!this.state.locked) {
         this.flushBuffer();
@@ -100,14 +100,14 @@ export default class Board extends React.Component<BoardProps, BoardState> {
   private handleClick (position:[number,number]) {
     if (this.state.locked) {
       return;
-    } else if (this.targeted) {
-      let targeted = deepCopy(this.targeted);
-      this.targeted = undefined;
+    } else if (this.targetedCells) {
+      let targetedCells = deepCopy(this.targetedCells);
+      this.targetedCells = undefined;
 
-      if (targeted.length >= 3) {
-        this.props.addScore(targeted.length);
+      if (targetedCells.length >= 3) {
+        this.props.addScore(targetedCells.length);
         this.lock(() => {
-          this.boomByPositions(targeted);
+          this.boomByPositions(targetedCells);
         });
       } else {
         this.resetBuffer();
@@ -115,21 +115,21 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     }
   }
 
-  private fillCells(s?:number) {
+  private fillCells(n?:number) {
     let ns:number[];
 
-    if (typeof s !== 'undefined') {
-      let pickn = s > 3 ? s - 1 : 2;
+    if (typeof n === 'number') {
+      let pickn = n > 3 ? n - 1 : 2;
       ns = Array(pickn).fill(null);
       ns = ns.map((v:number, i:number) => {
         return this.getRandomTileType();
       });
     }
 
-    this.buffer.forEach( (r:_Cell[]) => {
-      r.forEach( (c:_Cell, i:number) => {
+    this.buffer.forEach( (row:_Cell[]) => {
+      row.forEach( (c:_Cell, i:number) => {
         if (c.type === 0) {
-          r[i] = this.fillCell(ns);
+          row[i] = this.fillCell(ns);
         }
       })
     });
@@ -137,17 +137,18 @@ export default class Board extends React.Component<BoardProps, BoardState> {
 
     this.unlock();
 
-    if (typeof this.hovered !== 'undefined') {
-      // this.handleUnhover(this.hovered);
+    if (typeof this.hoveredCells !== 'undefined') {
+      // this.handleUnhover(this.hoveredCells);
       this.clearTargeted();
-      this.handleHover(this.hovered);
+      this.handleHover(this.hoveredCells);
     }
   }
 
   private fillCell(ns?:number[]):_Cell {
     let type = this.getRandomTileType();
     if (typeof ns !== 'undefined') {
-      let type = getRandomItem(ns);
+      console.log(ns);
+      type = getRandomItem(ns);
     }
 
     let special = '';
