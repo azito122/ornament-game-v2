@@ -12,6 +12,8 @@
   position: relative;
   background-size: cover;
   background-repeat: no-repeat;
+  background-color: rgba(180,110,0,1);
+  border: 10px solid black;
   border-radius: 6px;
   margin-top: 40px;
   padding: 15px;
@@ -61,19 +63,67 @@
   }
 
   &.season-spring {
-    background-color: #15a128;
+    border-color: #15a128;
+    .season-circle {
+      background-color: #15a128;
+      circle {
+        fill: #15a128;
+      }
+    }
   }
 
   &.season-fall {
-    background-color: #663300;
+    border-color: #663300;
+    .season-circle {
+      background-color: #663300;
+      circle {
+        fill: #663300;
+      }
+    }
   }
 
   &.season-summer {
-    background-color: #eded34;
+    border-color: #eded34;
+    .season-circle {
+      background-color: #eded34;
+      circle {
+        fill: #eded34;
+      }
+    }
   }
 
   &.season-winter {
-    background-color: #c4fdff;
+    border-color: #c4fdff;
+    .season-circle {
+      background-color: #c4fdff;
+      circle {
+        fill: #c4fdff;
+      }
+    }
+  }
+
+  .season-circle {
+    margin: 0 auto;
+    transform: rotate(-90deg);
+    background: #ddd;
+    border-radius: 50%;
+    display: block;
+
+    circle {
+      fill: #ddd;
+      stroke: rgba(0,0,0,0.4);
+      stroke-width: 50;
+      stroke-dasharray: 0 158;
+      transition: stroke-dasharray 1s linear;
+    }
+
+    &.season-switch {
+      border: 1px solid blue;
+
+      circle {
+        transition: none !important;
+      }
+    }
   }
 }
 

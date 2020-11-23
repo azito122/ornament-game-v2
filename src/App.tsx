@@ -45,6 +45,10 @@ export default class App extends React.Component<AppProps, AppState> {
   }
 
   render () {
+    const seasonPercent = (this.state.tilNextSeason/this.props.seasonGap)*100;
+    const seasonPercentReverse = 100 - seasonPercent;
+    const seasonSwitch = seasonPercent > 99;
+
     return (
       <div className="app">
         <div className="game-header">
@@ -91,9 +95,12 @@ export default class App extends React.Component<AppProps, AppState> {
             <div>
               Season: {this.getSeasonString(this.state.season)}
               <div className="loading-bar"><span
-                style={{width:(this.state.tilNextSeason/this.props.seasonGap)*100}}
+                style={{width:seasonPercent}}
               ></span></div>
             </div>
+            <svg width="100" height="100" className={`season-circle ${seasonSwitch?'season-switch':''}`}>
+              <circle r="25" cx="50" cy="50" className="pie" style={{strokeDasharray: `${Math.max(((seasonPercentReverse*158)/100),.1)} 158`}}/>
+            </svg>
           </div>
         </div>
 
