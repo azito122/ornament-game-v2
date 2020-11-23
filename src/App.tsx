@@ -55,11 +55,6 @@ export default class App extends React.Component<AppProps, AppState> {
           <h1 className="title">
             Nature's Ornaments
           </h1>
-          <Menu
-            getConfig={(id:string, defaultv:string) => {this.getConfig(id, defaultv)}}
-            setConfig={(id:string, value:string) => {this.setConfig(id, value)}}
-            config={this.state.config}
-          />
         </div>
 
         <div className="game-intro">
@@ -94,13 +89,18 @@ export default class App extends React.Component<AppProps, AppState> {
             </div>
             <div>
               Season: {this.getSeasonString(this.state.season)}
-              <div className="loading-bar"><span
+              {/* <div className="loading-bar"><span
                 style={{width:seasonPercent}}
-              ></span></div>
+              ></span></div> */}
             </div>
             <svg width="100" height="100" className={`season-circle ${seasonSwitch?'season-switch':''}`}>
               <circle r="25" cx="50" cy="50" className="pie" style={{strokeDasharray: `${Math.max(((seasonPercentReverse*158)/100),.1)} 158`}}/>
             </svg>
+            <Menu
+              getConfig={(id:string, defaultv:string) => {this.getConfig(id, defaultv)}}
+              setConfig={(id:string, value:string) => {this.setConfig(id, value)}}
+              config={this.state.config}
+            />
           </div>
         </div>
 

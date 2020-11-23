@@ -24,11 +24,12 @@ export default class Menu extends React.Component<MenuProps, MenuState> {
   render () {
     return (
     <div className="menu-wrapper">
-      <div
-        className={`menu-backdrop ${this.state.visible ? 'visible' : 'invisible'}`}
-        onClick={this.close.bind(this)}
-      ></div>
-      <div className="menu-icon" onClick={this.open.bind(this)}></div>
+      <div className="menu-button-wrapper" onClick={this.open.bind(this)}>
+        <div className="menu-icon"></div>
+
+        <div className="menu-title">Settings</div>
+      </div>
+
       <div className={`menu ${this.state.visible ? 'visible' : 'invisible'}`}>
         <div className="menu-items-wrapper">
           <label htmlFor="pause-seasons">Pause seasons</label>
@@ -40,6 +41,10 @@ export default class Menu extends React.Component<MenuProps, MenuState> {
           />
         </div>
       </div>
+      <div
+        className={`menu-backdrop ${this.state.visible ? 'visible' : 'invisible'}`}
+        onClick={this.close.bind(this)}
+      ></div>
     </div>
     )
   }

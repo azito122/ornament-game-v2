@@ -1,13 +1,36 @@
+.menu-button-wrapper {
+    width: 100%;
+    height: 4rem;
+    border: 10px solid black;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background: white;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    align-content: center;
+
+    &:hover {
+        background: black;
+        color: white;
+    }
+}
+
+.menu-icon,
+.menu-title {
+}
+
 .menu-icon {
-    height: 100px;
-    width: 100px;
+    // float: left;
+    height: 30px;
+    width: 30px;
     background-image: url('https://image.flaticon.com/icons/png/512/40/40031.png');
     background-size: cover;
     background-repeat: no-repeat;
 }
 
 .menu-backdrop {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     z-index: 29999;
