@@ -66,6 +66,11 @@
         color: #eee4da;
       }
     }
+
+    .season-label {
+      color: black;
+      text-align: center;
+    }
   }
 
   &.season-spring {
@@ -124,8 +129,6 @@
     }
 
     &.season-switch {
-      border: 1px solid blue;
-
       circle {
         transition: none !important;
       }

@@ -87,7 +87,7 @@ export default class App extends React.Component<AppProps, AppState> {
             <div className="level-container">
               {this.state.level}
             </div>
-            <div>
+            <div className="season-label">
               Season: {this.getSeasonString(this.state.season)}
               {/* <div className="loading-bar"><span
                 style={{width:seasonPercent}}
